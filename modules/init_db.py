@@ -18,10 +18,10 @@ reviewer_schema = open('./modules/query/reviewer.sql').read()
 photo_schema = open('./modules/query/photo.sql').read()
 charac_schema = open('./modules/query/characteristic.sql').read()
 charac_review_schema = open('./modules/query/charac_review.sql').read()
-cur.execute(review_schema)
 cur.execute(reviewer_schema)
-cur.execute(photo_schema)
 cur.execute(charac_schema)
+cur.execute(review_schema)
+cur.execute(photo_schema)
 cur.execute(charac_review_schema)
 
 
