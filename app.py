@@ -12,16 +12,8 @@ def get_db_connection():
 
 @app.route("/")
 def index():
-    conn = get_db_connection()
-    posts = conn.execute('SELECT * FROM posts').fetchall()
-    conn.close()
-    return render_template('index.html', posts=posts)
-
-
-@app.route("/users")
-def users():
-    return 'Bob, Petter, Mary'
+    return 'This is Review API'
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="localhost", port=8000, debug=True)
