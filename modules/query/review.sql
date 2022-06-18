@@ -2,14 +2,14 @@ CREATE TABLE review (
     id INTEGER NOT NULL AUTO_INCREMENT,
     product_id INTEGER,
     rating INTEGER,
-    date TIMESTAMP,
+    date VARCHAR(20),
     summary TEXT, 
     body TEXT,
-    recommend INTEGER,
-    reported INTEGER,
+    recommend CHAR(10),
+    reported CHAR(10),
+    reviewer_name VARCHAR(100),
+    reviewer_email VARCHAR(100),
     response TEXT,
     helpfulness INTEGER,
-    reviewer INTEGER,
-    PRIMARY KEY (id),
-    FOREIGN KEY (reviewer) REFERENCES reviewer(id)
+    PRIMARY KEY (id)
 );

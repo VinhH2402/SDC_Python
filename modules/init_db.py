@@ -1,9 +1,6 @@
 import mysql.connector
-import pandas as pd
-import s3
-
-#file = s3.get_files()
-
+import csv
+import itertools
 
 mydb = mysql.connector.connect(host="localhost")
 cur = mydb.cursor()
@@ -14,43 +11,63 @@ cur.execute("CREATE DATABASE reviewAPI")
 cur.execute('USE reviewAPI')
 
 review_schema = open('./modules/query/review.sql').read()
-reviewer_schema = open('./modules/query/reviewer.sql').read()
 photo_schema = open('./modules/query/photo.sql').read()
 charac_schema = open('./modules/query/characteristic.sql').read()
 charac_review_schema = open('./modules/query/charac_review.sql').read()
-cur.execute(reviewer_schema)
+
 cur.execute(charac_schema)
 cur.execute(review_schema)
 cur.execute(photo_schema)
 cur.execute(charac_review_schema)
 
 
-# review = file
+with open('./csv/reviews.csv', 'r') as characteristic_review:
+  reader = csv.reader(characteristic_review)
+  header = next(reader)
+  while True:
+    records = list(itertools.islice(reader, 20000))
+    if not records:
+      break
+    query = '''INSERT INTO review 
+            (id, product_id, rating, date, summary, body,recommend, 
+            reported,reviewer_name, reviewer_email, response, helpfulness) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    cur.executemany(query, records)
+    mydb.commit()
 
+with open('./csv/characteristics.csv', 'r') as characteristic:
+  reader = csv.reader(characteristic)
+  header = next(reader)
+  while True:
+    records = list(itertools.islice(reader, 20000))
+    if not records:
+      break
+    query = 'INSERT INTO characteristic (id, product_id, name) VALUES (%s, %s, %s)'
+    cur.executemany(query, records)
+    mydb.commit()
 
-# cache = {}
-# cur.execute('INSERT INTO reviewer (name, email) VALUEs (%s, %s)', ("funtime", "first.last@gmail.com"))
+with open('./csv/characteristic_reviews.csv', 'r') as characteristic_review:
+  reader = csv.reader(characteristic_review)
+  header = next(reader)
+  while True:
+    records = list(itertools.islice(reader, 20000))
+    if not records:
+      break
+    query = '''INSERT INTO characteristic_review 
+            (id, characteristic_id, review_id, value) 
+            VALUES (%s, %s, %s, %s)'''
+    cur.executemany(query, records)
+    mydb.commit()
 
-# for row in review.itertuples():
-#     cur.execute('SELECT id FROM reviewer WHERE name = %s', (row.reviewer_name,))
-#     reviewerId = cur.fetchone()
-#     if not reviewerId:
-#         cur.execute('INSERT INTO reviewer (name, email) VALUES (%s, %s)', (row.reviewer_name, row.reviewer_email))
-#         mydb.commit()
-#         reviewerId = cur.lastrowid
-#     else:
-#         reviewerId = reviewerId[0]
-   
-#     sql = '''INSERT INTO review 
-#             (id, product_id, rating, date, summary, body, recommend, reported, response, helpfulness, reviewer)
-#             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)'''
-#     value =  (row.id, row.product_id, row.rating, row.date, row.summary, row.body,
-#                  row.recommend, row.reported, row.response, row.helpfulness, reviewerId)        
-#     cur.execute(sql,value)
-
-
-# mydb.commit()
-
-# cur.execute('SELECT * FROM review')
-# print(cur.fetchall())
-
+with open('./csv/reviews_photos.csv', 'r') as characteristic_review:
+  reader = csv.reader(characteristic_review)
+  header = next(reader)
+  while True:
+    records = list(itertools.islice(reader, 20000))
+    if not records:
+      break
+    query = '''INSERT INTO photo 
+            (id, review_id, url) 
+            VALUES (%s, %s, %s)'''
+    cur.executemany(query, records)
+    mydb.commit()
