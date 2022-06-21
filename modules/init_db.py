@@ -1,8 +1,8 @@
-import mysql.connector
+import mysql.connector as mysql
 import csv
 import itertools
 
-mydb = mysql.connector.connect(host="localhost")
+mydb = mysql.connect(host="localhost")
 cur = mydb.cursor()
 
 # create DB

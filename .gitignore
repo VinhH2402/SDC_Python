@@ -2,3 +2,4 @@ lib/
 csv/
 __pycache__
 .env
+test.py
