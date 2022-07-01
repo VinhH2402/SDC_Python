@@ -35,29 +35,29 @@ with open('./csv/reviews.csv', 'r') as characteristic_review:
     cur.executemany(query, records)
     mydb.commit()
 
-with open('./csv/characteristics.csv', 'r') as characteristic:
-  reader = csv.reader(characteristic)
-  header = next(reader)
-  while True:
-    records = list(itertools.islice(reader, 20000))
-    if not records:
-      break
-    query = 'INSERT INTO characteristic (id, product_id, name) VALUES (%s, %s, %s)'
-    cur.executemany(query, records)
-    mydb.commit()
+# with open('./csv/characteristics.csv', 'r') as characteristic:
+#   reader = csv.reader(characteristic)
+#   header = next(reader)
+#   while True:
+#     records = list(itertools.islice(reader, 20000))
+#     if not records:
+#       break
+#     query = 'INSERT INTO characteristic (id, product_id, name) VALUES (%s, %s, %s)'
+#     cur.executemany(query, records)
+#     mydb.commit()
 
-with open('./csv/characteristic_reviews.csv', 'r') as characteristic_review:
-  reader = csv.reader(characteristic_review)
-  header = next(reader)
-  while True:
-    records = list(itertools.islice(reader, 20000))
-    if not records:
-      break
-    query = '''INSERT INTO characteristic_review 
-            (id, characteristic_id, review_id, value) 
-            VALUES (%s, %s, %s, %s)'''
-    cur.executemany(query, records)
-    mydb.commit()
+# with open('./csv/characteristic_reviews.csv', 'r') as characteristic_review:
+#   reader = csv.reader(characteristic_review)
+#   header = next(reader)
+#   while True:
+#     records = list(itertools.islice(reader, 20000))
+#     if not records:
+#       break
+#     query = '''INSERT INTO characteristic_review 
+#             (id, characteristic_id, review_id, value) 
+#             VALUES (%s, %s, %s, %s)'''
+#     cur.executemany(query, records)
+#     mydb.commit()
 
 with open('./csv/reviews_photos.csv', 'r') as characteristic_review:
   reader = csv.reader(characteristic_review)
