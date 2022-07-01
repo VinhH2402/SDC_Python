@@ -1,24 +1,30 @@
-import mysql.connector as mysql
 import csv
 import itertools
+from flask_mysqldb import MySQL
+from flask import Flask
 
-mydb = mysql.connect(host="localhost")
-cur = mydb.cursor()
+app = Flask(__name__)
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_DB'] = 'reviewAPI'
 
+mysql = MySQL(app)
+cursor = mysql.connection.cursor()
 # create DB
-cur.execute("DROP DATABASE reviewAPI")
-cur.execute("CREATE DATABASE reviewAPI")
-cur.execute('USE reviewAPI')
+cursor.execute("DROP DATABASE reviewAPI")
+cursor.execute("CREATE DATABASE reviewAPI")
+cursor.execute('USE reviewAPI')
 
 review_schema = open('./modules/query/review.sql').read()
 photo_schema = open('./modules/query/photo.sql').read()
 charac_schema = open('./modules/query/characteristic.sql').read()
 charac_review_schema = open('./modules/query/charac_review.sql').read()
 
-cur.execute(charac_schema)
-cur.execute(review_schema)
-cur.execute(photo_schema)
-cur.execute(charac_review_schema)
+cursor.execute(charac_schema)
+cursor.execute(review_schema)
+cursor.execute(photo_schema)
+cursor.execute(charac_review_schema)
 
 
 with open('./csv/reviews.csv', 'r') as characteristic_review:
@@ -32,8 +38,8 @@ with open('./csv/reviews.csv', 'r') as characteristic_review:
             (id, product_id, rating, date, summary, body,recommend, 
             reported,reviewer_name, reviewer_email, response, helpfulness) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
-    cur.executemany(query, records)
-    mydb.commit()
+    cursor.executemany(query, records)
+    mysql.connection.commit()
 
 # with open('./csv/characteristics.csv', 'r') as characteristic:
 #   reader = csv.reader(characteristic)
@@ -43,7 +49,7 @@ with open('./csv/reviews.csv', 'r') as characteristic_review:
 #     if not records:
 #       break
 #     query = 'INSERT INTO characteristic (id, product_id, name) VALUES (%s, %s, %s)'
-#     cur.executemany(query, records)
+#     cursor.executemany(query, records)
 #     mydb.commit()
 
 # with open('./csv/characteristic_reviews.csv', 'r') as characteristic_review:
@@ -56,7 +62,7 @@ with open('./csv/reviews.csv', 'r') as characteristic_review:
 #     query = '''INSERT INTO characteristic_review 
 #             (id, characteristic_id, review_id, value) 
 #             VALUES (%s, %s, %s, %s)'''
-#     cur.executemany(query, records)
+#     cursor.executemany(query, records)
 #     mydb.commit()
 
 with open('./csv/reviews_photos.csv', 'r') as characteristic_review:
@@ -69,5 +75,7 @@ with open('./csv/reviews_photos.csv', 'r') as characteristic_review:
     query = '''INSERT INTO photo 
             (id, review_id, url) 
             VALUES (%s, %s, %s)'''
-    cur.executemany(query, records)
-    mydb.commit()
+    cursor.executemany(query, records)
+    mysql.connection.commit()
+
+cursor.close()    
